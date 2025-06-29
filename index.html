@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Tic-Tac-Toe by Vedu Ravi Union</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2rem;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+        }
+
+        .game-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255, 255, 255, 0.5); }
+            to { text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 255, 255, 0.6); }
+        }
+
+        .inventor-credit {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .music-btn {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+        }
+
+        .scoreboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .score-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .score-card.active {
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            transform: scale(1.05);
+        }
+
+        .player-symbol {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .player-x .player-symbol {
+            color: #ff6b6b;
+        }
+
+        .player-o .player-symbol {
+            color: #4ecdc4;
+        }
+
+        .score-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fff;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 2rem auto;
+            max-width: 300px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        .cell {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 10px;
+            font-size: 2rem;
+            font-weight: bold;
+            font-family: 'Orbitron', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .cell:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .cell.x {
+            color: #ff6b6b;
+            animation: placeX 0.5s ease;
+        }
+
+        .cell.o {
+            color: #4ecdc4;
+            animation: placeO 0.5s ease;
+        }
+
+        @keyframes placeX {
+            0% { transform: scale(0) rotate(180deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        @keyframes placeO {
+            0% { transform: scale(0) rotate(-180deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .cell.winning {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            animation: winPulse 1s ease infinite;
+        }
+
+        @keyframes winPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .game-status {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+            margin: 1rem 0;
+            min-height: 2rem;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .win-animation {
+            animation: celebrate 2s ease infinite;
+        }
+
+        @keyframes celebrate {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.1) rotate(5deg); }
+            75% { transform: scale(1.1) rotate(-5deg); }
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            border-radius: 20px;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #ffd700;
+            border-radius: 50%;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 1; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.5; }
+        }
+
+        .footer {
+            margin-top: 2rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 640px) {
+            .game-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .game-title {
+                font-size: 2rem;
+            }
+            
+            .cell {
+                width: 70px;
+                height: 70px;
+                font-size: 1.8rem;
+            }
+            
+            .controls {
+                gap: 0.5rem;
+            }
+            
+            .control-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="particles"></div>
+        
+        <h1 class="game-title">TIC TAC TOE</h1>
+        <div class="inventor-credit">Invented by Vedu Ravi Union</div>
+        
+        <div class="controls">
+            <button class="control-btn" onclick="resetGame()">
+                <i class="fas fa-redo"></i> New Game
+            </button>
+            <button class="control-btn music-btn" onclick="toggleMusic()">
+                <i class="fas fa-music"></i> <span id="musicText">Music On</span>
+            </button>
+        </div>
+        
+        <div class="scoreboard">
+            <div class="score-card player-x" id="scoreX">
+                <div class="player-symbol">X</div>
+                <div class="score-number" id="scoreXValue">0</div>
+            </div>
+            <div class="score-card player-o" id="scoreO">
+                <div class="player-symbol">O</div>
+                <div class="score-number" id="scoreOValue">0</div>
+            </div>
+        </div>
+        
+        <div class="game-status" id="gameStatus">Player X's Turn</div>
+        
+        <div class="game-board" id="gameBoard">
+            <button class="cell" data-index="0" onclick="makeMove(0)"></button>
+            <button class="cell" data-index="1" onclick="makeMove(1)"></button>
+            <button class="cell" data-index="2" onclick="makeMove(2)"></button>
+            <button class="cell" data-index="3" onclick="makeMove(3)"></button>
+            <button class="cell" data-index="4" onclick="makeMove(4)"></button>
+            <button class="cell" data-index="5" onclick="makeMove(5)"></button>
+            <button class="cell" data-index="6" onclick="makeMove(6)"></button>
+            <button class="cell" data-index="7" onclick="makeMove(7)"></button>
+            <button class="cell" data-index="8" onclick="makeMove(8)"></button>
+        </div>
+        
+        <div class="footer">
+            <p>© 2024 Vedu Ravi Union - All Rights Reserved</p>
+        </div>
+    </div>
+
+    <audio id="backgroundMusic" loop>
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DvwF8tBjiAz/HZDyoFJ2TQ2/K6Zi8MJWO8/NyOQAYeW6vq5pKaVBdPHWqBhOC0FMYQbYOHzgW4BwCBHgOZNAK4CfKFbOKo6/dXYE5xEKCQDd9YQ2vYy6LH+EQkgP+k0gUxBJsVfHmGwQ+jlwTzd0F2gqDp5NDWYCsXhQ5hcFr1Qz9+jTzHhxCQ6YB3TcwOVwNQf5nkGOxFFkLBPBT6yKZBhXWLU3sHhgBKSJo1vY6jKZGEXOKzjYoFqHdDQ4bA5vW4CWMNrLn0a8A3RZNSqSqKyKFKYHsQ9ggTGk5Pj5AKzEd9RqHE2mPzepVGfRwKWFEXVzJGnKYIhyxZjDGfzgUTkIgN6iAIYhKJYGKXz4ZDaQWe5qbhAYjpEMuCyXnmCQQlCRAUbFcTfZGE3Q3mHxHOyMFZEFBfcEcGpNGbxUKJYnJqzNdTGNvYSPGDHk6aTQwGCFKCrJCFjqpYDKvZZpMOhgcYFEQgHaKQT7lVzGKtQEGzQJsBFrBzXxYcDjgPTt3DqQRG2ZgKpNBCJTjvAYMNhQQSBghkAFdGBzIFx4DjDGDaJzUGlAg5fOPpZZR0VBHuDgPpEOUQtUb3YXDAfJAG2WtQtNDw5CQjkSWCp1WNj4RTqCpIYCRQTQUCHkA7DKBVmBUjHWMUlJCkuRnmFyqFMQBgKZnRBmIVUNnJgYXNYUFUYgSECJoGNUGBGNQJjHygwR2p9KVUCShHWQQMhzgNlgzl3DVJcUjZzH4/TGDR7BQNfgQF+dxRaVRoFmkSqMRo7hSgKpXKSEo2dG6XqSQVlj1VdYGhM0SRzHNUZBpEALk5gCcRBaEMrDsAMGJRMSxGNQKmGLgKMGZXOMjqQRAHUgA0c8RAKQgHqO5YgZFCFkIz8lxKbEQQ2A5qXQAOCQoEhQFBQhm0CGRBMoiQHqTFUbFUFQQRJAVCMcCY5gfQEoTEQBPFJiQGQgKwgKTEQaQF2x4LxKGPT7rlzMEbGQCjmQfgKRgxGSwQhDIgQ2gQQ2gD2QBQgJQgKwgKTEQfQF2QFQjHAmOYG0cGCTBQYQFQjHAmOYG0cGCgJQgKwgKTEQfQF2QFQjHAmOYG0cGCTBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCjBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCgJQgKwgKTEQfQF2QFQjHAmOYG0cGCTBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCjBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCgJQgKwgKTEQfQF2QFQjHAmOYG0cGCTBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCjBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCgJQgKwgKTEQfQF2QFQjHAmOYG0cGCTBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCjBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCgJQgKwgKTEQfQF2QFQjHAmOYG0cGCTBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCjBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCgJQgKwgKTEQfQF2QFQjHAmOYG0cGCTBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCjBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCgJQgKwgKTEQfQF2QFQjHAmOYG0cGCTBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCjBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCgJQgKwgKTEQfQF2QFQjHAmOYG0cGCTBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCjBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCgJQgKwgKTEQfQF2QFQjHAmOYG0cGCTBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCjBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCgJQgKwgKTEQfQF2QFQjHAmOYG0cGCTBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCjBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCgJQgKwgKTEQfQF2QFQjHAmOYG0cGCTBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCjBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCgJQgKwgKTEQfQF2QFQjHAmOYG0cGCTBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCjBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCgJQgKwgKTEQfQF2QFQjHAmOYG0cGCTBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCjBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCgJQgKwgKTEQfQF2QFQjHAmOYG0cGCTBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCjBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCgJQgKwgKTEQfQF2QFQjHAmOYG0cGCTBQYQFQjHAmOYE0kGCjBQYQFQjHAmOYG0cGCjBQYQFQ=" type="audio/wav">
+    </audio>
+
+    <script>
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameActive = true;
+        let scores = { X: 0, O: 0 };
+        let musicPlaying = false;
+
+        const winningConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+
+        function makeMove(index) {
+            if (board[index] !== '' || !gameActive) return;
+
+            board[index] = currentPlayer;
+            updateBoard();
+            
+            if (checkWin()) {
+                handleWin();
+            } else if (board.every(cell => cell !== '')) {
+                handleDraw();
+            } else {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                updateGameStatus();
+                updateActivePlayer();
+            }
+        }
+
+        function updateBoard() {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach((cell, index) => {
+                cell.textContent = board[index];
+                cell.className = 'cell';
+                if (board[index] !== '') {
+                    cell.classList.add(board[index].toLowerCase());
+                }
+            });
+        }
+
+        function updateGameStatus() {
+            const status = document.getElementById('gameStatus');
+            if (gameActive) {
+                status.textContent = `Player ${currentPlayer}'s Turn`;
+                status.className = 'game-status';
+            }
+        }
+
+        function updateActivePlayer() {
+            const scoreX = document.getElementById('scoreX');
+            const scoreO = document.getElementById('scoreO');
+            
+            scoreX.classList.remove('active');
+            scoreO.classList.remove('active');
+            
+            if (currentPlayer === 'X') {
+                scoreX.classList.add('active');
+            } else {
+                scoreO.classList.add('active');
+            }
+        }
+
+        function checkWin() {
+            return winningConditions.some(condition => {
+                const [a, b, c] = condition;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    highlightWinningCells(condition);
+                    return true;
+                }
+                return false;
+            });
+        }
+
+        function highlightWinningCells(condition) {
+            const cells = document.querySelectorAll('.cell');
+            condition.forEach(index => {
+                cells[index].classList.add('winning');
+            });
+        }
+
+        function handleWin() {
+            gameActive = false;
+            scores[currentPlayer]++;
+            updateScores();
+            
+            const status = document.getElementById('gameStatus');
+            status.textContent = `🎉 Player ${currentPlayer} Wins! 🎉`;
+            status.className = 'game-status win-animation';
+            
+            createParticles();
+            
+            // Remove active player highlighting
+            document.getElementById('scoreX').classList.remove('active');
+            document.getElementById('scoreO').classList.remove('active');
+        }
+
+        function handleDraw() {
+            gameActive = false;
+            const status = document.getElementById('gameStatus');
+            status.textContent = "It's a Draw! 🤝";
+            status.className = 'game-status';
+            
+            // Remove active player highlighting
+            document.getElementById('scoreX').classList.remove('active');
+            document.getElementById('scoreO').classList.remove('active');
+        }
+
+        function updateScores() {
+            document.getElementById('scoreXValue').textContent = scores.X;
+            document.getElementById('scoreOValue').textContent = scores.O;
+        }
+
+        function resetGame() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameActive = true;
+            
+            updateBoard();
+            updateGameStatus();
+            updateActivePlayer();
+            
+            // Clear particles
+            const particles = document.querySelector('.particles');
+            particles.innerHTML = '';
+            
+            // Remove winning animations
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                cell.classList.remove('winning');
+            });
+        }
+
+        function toggleMusic() {
+            const music = document.getElementById('backgroundMusic');
+            const musicText = document.getElementById('musicText');
+            
+            if (musicPlaying) {
+                music.pause();
+                musicText.textContent = 'Music Off';
+                musicPlaying = false;
+            } else {
+                music.play().catch(e => console.log('Audio play failed:', e));
+                musicText.textContent = 'Music On';
+                musicPlaying = true;
+            }
+        }
+
+        function createParticles() {
+            const particlesContainer = document.querySelector('.particles');
+            particlesContainer.innerHTML = '';
+            
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 3 + 's';
+                particle.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                particlesContainer.appendChild(particle);
+            }
+            
+            // Remove particles after animation
+            setTimeout(() => {
+                particlesContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        // Initialize game
+        document.addEventListener('DOMContentLoaded', function() {
+            updateGameStatus();
+            updateActivePlayer();
+            updateScores();
+        });
+    </script>
+</body>
+</html>
